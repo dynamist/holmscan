@@ -9,8 +9,8 @@ id = hsw.startWebScan(name="Example Job",
                        schedule_is_active=False, 
                        node_source_overrides=False, 
                        is_was_discovery=True, 
-                       assets=[41150], 
+                       assets=[hsw.getAssetId("Example Host")], 
                        scheduled=False)
 
 # Gets information about running job using ID 
-print hsw.getWebScan(id).text
+print(hsw.getWebScan(id).text)
