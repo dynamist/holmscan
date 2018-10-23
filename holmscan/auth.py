@@ -14,6 +14,19 @@ class HolmSecurityWeb():
                                        "password": password, 
                                        "redirect": "", 
                                        "language": "en"}) 
+    def getAssetId(self, name):
+        assets = json.loads(self.session.get("https://sc.holmsecurity.com/assets/assets/").text)
+        for asset in assets['results']:
+            # TODO: remove case insensitive? (.lower())
+            if name.lower() == asset['name'].lower():
+                return asset['id']
+
+        webapps = json.loads(self.session.get("https://sc.holmsecurity.com/scan/webapps/").text)
+        for webapp in webapps['results']:
+            if name == webapp['name']:
+                return webapp['asset']['id']
+
+        return False
 
     def getUserId(self):
         return json.loads(self.session.get("https://sc.holmsecurity.com/users/user/profile").text)['user']
