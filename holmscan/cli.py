@@ -13,6 +13,7 @@ import sys
 from pprint import pformat
 
 # holmscan imports
+from holmscan.controller import Controller
 from holmscan.exceptions import (
     HolmscanConfigException,
     HolmscanDataException,
@@ -94,14 +95,16 @@ def run(cli_args, sub_args):
     retcode = 0
 
     try:
+        c = Controller()
 
         if cli_args["<command>"] == "kaboom":
-            print("kaboom stub")
+            # TODO change here
+            c.scan.kaboom()
 
     except (
-        PhabfiveConfigException,
-        PhabfiveDataException,
-        PhabfiveRemoteException,
+        HolmscanConfigException,
+        HolmscanDataException,
+        HolmscanRemoteException,
     ) as e:
         print(e)
         retcode = 1
