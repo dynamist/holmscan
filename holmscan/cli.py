@@ -12,6 +12,13 @@ import logging.config
 import sys
 from pprint import pformat
 
+# holmscan imports
+from holmscan.exceptions import (
+    HolmscanConfigException,
+    HolmscanDataException,
+    HolmscanRemoteException,
+)
+
 # 3rd party imports
 from docopt import docopt
 
@@ -30,7 +37,7 @@ Options:
     -q, --quiet         Suppress terminal output
     -v, --verbose       Verbose terminal output (multile -v increses verbosity)
     -V, --version       Display the version number and exit
-    """
+"""
 
 kaboom_args = """
 Usage:
@@ -39,14 +46,12 @@ Usage:
 Options:
     -h, --help          Show this help message and exit
     -q, --quiet         Suppress terminal output
-    """
+"""
 
 
 def parse_cli():
     """
-    Split the functionality into two methos.
-
-    One for parsing the cli and one that runs the application.
+    Parse the CLI arguments and options.
     """
     import holmscan
 
@@ -84,12 +89,24 @@ def parse_cli():
 
 def run(cli_args, sub_args):
     """
+    Run the CLI application.
     """
+    retcode = 0
 
-    if cli_args["<command>"] == "kaboom":
-        print("kaboom stub")
-    else:
-        log.debug("Command not implemented")
+    try:
+
+        if cli_args["<command>"] == "kaboom":
+            print("kaboom stub")
+
+    except (
+        PhabfiveConfigException,
+        PhabfiveDataException,
+        PhabfiveRemoteException,
+    ) as e:
+        print(e)
+        retcode = 1
+
+    return retcode
 
 
 def cli_entrypoint():
@@ -99,6 +116,6 @@ def cli_entrypoint():
     cli_args, sub_args = parse_cli()
 
     try:
-        run(cli_args, sub_args)
+        sys.exit(run(cli_args, sub_args))
     except Exception:
         raise
