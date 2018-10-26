@@ -34,23 +34,24 @@ class Scan(HolmscanModule):
                 "appliance": "-1",
                 "source": 0,
                 "node": "",
-                "user": "{}".format(self.user_id),
+                "user": "{0}".format(self.user_id),
                 "start_date": None,
             }
         )
 
-        resp = self.controller.session.post(
-            "https://sc.holmsecurity.com/scan/wscans/",
+        job_url = u"{0}scan/wscans/".format(self.controller.conf.get("HOLMSEC_URL"))
+        job_response = self.controller.session.post(
+            job_url,
             data=json.dumps(data).replace(" ", ""),
             headers={"Content-Type": "application/json"},
         )
 
-        response = json.loads(resp.text)
-        start_resp = self.controller.session.get(
-            "https://sc.holmsecurity.com/scan/start/{}/".format(response["id"])
+        job_id = json.loads(job_response.text)["id"]
+        start_url = u"{0}scan/start/{1}/".format(
+            self.controller.conf.get("HOLMSEC_URL"), job_id
         )
-        start_response = json.loads(start_resp.text)
-        return start_response["run"]
+        start_response = self.controller.session.get(start_url)
+        return json.loads(start_response.text)["run"]
 
     @login
     def get_asset_id(self, name):
