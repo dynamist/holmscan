@@ -31,7 +31,7 @@ Usage:
     holmscan [-v ...] [options] <command> [<args> ...]
 
 Available holmscan commands are:
-    kaboom              Kaboom
+    kaboom              Scan
 
 Options:
     -h, --help          Show this help message and exit
