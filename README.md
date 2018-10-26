@@ -2,6 +2,8 @@
 
 A simple Python command line tool to interact with [Holm Security VMP](https://www.holmsecurity.com/vulnerability-assessment).
 
+Example usage: `holmscan kaboom "Example Host"`
+
 ## History
 
 The motivation to start this tool is our drive to automate all the things. So naturally we wanted to integrate vulnerability scanning as part of our CI/CD pipeline.
