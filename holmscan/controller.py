@@ -9,6 +9,7 @@ import os
 import re
 
 # holmscan imports
+from holmscan.decorators import login
 from holmscan.exceptions import HolmscanConfigException
 from holmscan.scan import Scan
 
@@ -172,14 +173,12 @@ class Controller(object):
         url = u"{0}login/in".format(self.conf.get("HOLMSEC_URL"))
         username = self.conf.get("HOLMSEC_USERNAME")
         password = self.conf.get("HOLMSEC_PASSWORD")
-        data = json.dumps(
-            {
-                "username": username,
-                "password": password,
-                "redirect": "",
-                "language": "en",
-            }
-        )
+        data = {
+            "username": username,
+            "password": password,
+            "redirect": "",
+            "language": "en",
+        }
 
         log.debug("Logging in to Security Center at {}".format(url))
         log.debug("JSON data: {0}".format(data))
@@ -187,9 +186,10 @@ class Controller(object):
         response = self.session.post(url, data=data)
         log.debug("Response from Security Center: {0}".format(response))
 
-        self.loggedin = True
+        if response.ok and "doLogout" in response.text:
+            self.loggedin = True
 
-        return response
+        return self.loggedin
 
     def _logout(self):
         """
@@ -199,4 +199,5 @@ class Controller(object):
 
         # TODO logout is not implemented
         import NotImplementedError
+
         raise NotImplementedError

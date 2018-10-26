@@ -42,7 +42,7 @@ Options:
 
 kaboom_args = """
 Usage:
-    holmscan kaboom [options]
+    holmscan kaboom [options] <asset>
 
 Options:
     -h, --help          Show this help message and exit
@@ -98,8 +98,16 @@ def run(cli_args, sub_args):
         c = Controller()
 
         if cli_args["<command>"] == "kaboom":
-            # TODO change here
-            c.scan.kaboom()
+            asset = c.scan.get_asset_id(sub_args["<asset>"])
+            scan_id = c.scan.start_web_scan(
+                name="Example Job",
+                schedule_is_active=False,
+                node_source_overrides=False,
+                is_was_discovery=True,
+                assets=[asset],
+                scheduled=False,
+            )
+            print(c.scan.get_web_scan(scan_id))
 
     except (
         HolmscanConfigException,
