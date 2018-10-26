@@ -6,6 +6,7 @@ import logging
 import re
 
 # holmscan imports
+from holmscan.decorators import login
 from holmscan.exceptions import HolmscanDataException, HolmscanRemoteException
 from holmscan.interface import HolmscanModule
 
@@ -13,16 +14,9 @@ log = logging.getLogger(__name__)
 
 
 class Scan(HolmscanModule):
-    def __init__(self, phabricator):
-        super(Scan, self).__init__(phabricator)
+    def __init__(self, controller):
+        super(Scan, self).__init__(controller)
 
-    def get_secret(self, ids):
-        if not self._validate_identifier(ids):
-            raise HolmscanDataException('Identifier "{0}" is not valid.'.format(ids))
-
-        ids = ids.replace("K", "")
-
-        return response["data"]
-
+    @login
     def kaboom(self):
         print("kaboom")
