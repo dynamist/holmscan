@@ -30,7 +30,7 @@ base_args = """
 Usage:
     holmscan [-v ...] [options] <command> [<args> ...]
 
-Available holmscan commands are:
+Available commands are:
     kaboom              Scan
 
 Options:
