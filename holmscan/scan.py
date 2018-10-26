@@ -7,7 +7,6 @@ import re
 
 # holmscan imports
 from holmscan.decorators import login
-from holmscan.exceptions import HolmscanDataException, HolmscanRemoteException
 from holmscan.interface import HolmscanModule
 
 log = logging.getLogger(__name__)

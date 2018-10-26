@@ -9,7 +9,6 @@ import os
 import re
 
 # holmscan imports
-from holmscan.decorators import login
 from holmscan.exceptions import HolmscanConfigException
 from holmscan.scan import Scan
 
