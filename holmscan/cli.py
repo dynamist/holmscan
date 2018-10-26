@@ -100,7 +100,7 @@ def run(cli_args, sub_args):
         if cli_args["<command>"] == "kaboom":
             asset = c.scan.get_asset_id(sub_args["<asset>"])
             scan_id = c.scan.start_web_scan(
-                name="Example Job",
+                name="{0} Job".format(sub_args["<asset>"]),
                 schedule_is_active=False,
                 node_source_overrides=False,
                 is_was_discovery=True,
