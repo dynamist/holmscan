@@ -19,77 +19,38 @@ class Webscan(HolmscanModule):
         url = "{0}/web-scans/assets".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
-        headers = {
-            "Authorization": "Token {0}".format(
-                self.controller.conf.get("HOLMSEC_TOKEN")
-            )
-        }
-        response = self.controller.session.get(url, headers=headers)
-
-        log.debug("Sending to {0}".format(url))
-
+        response = self.controller.get(url)
         return response.json()
 
     def get_web_profiles(self):
         url = "{0}/web-scans/scan-profiles".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
-        headers = {
-            "Authorization": "Token {0}".format(
-                self.controller.conf.get("HOLMSEC_TOKEN")
-            )
-        }
-        response = self.controller.session.get(url, headers=headers)
-
-        log.debug("Sending to {0}".format(url))
-
+        response = self.controller.get(url)
         return response.json()
 
     def get_web_schedules(self):
         url = "{0}/web-scans/schedules".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
-        log.debug("Sending to {0}".format(url))
-        headers = {
-            "Authorization": "Token {0}".format(
-                self.controller.conf.get("HOLMSEC_TOKEN")
-            )
-        }
-        response = self.controller.session.get(url, headers=headers)
-
+        response = self.controller.get(url)
         return response.json()
 
     def list_web_scans(self):
         url = "{0}/web-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
-        log.debug("Sending to {0}".format(url))
-        headers = {
-            "Authorization": "Token {0}".format(
-                self.controller.conf.get("HOLMSEC_TOKEN")
-            )
-        }
         # FIXME handle pagination (see next, previous)
-        payload = {"limit": 10000}
-
-        response = self.controller.session.get(url, headers=headers, params=payload)
-
+        query = {"params": {"limit": 10000}}
+        response = self.controller.get(url, **query)
         return response.json()
 
     def start_web_scan(self, asset, profile):
         url = "{0}/web-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
-        headers = {
-            "Authorization": "Token {0}".format(
-                self.controller.conf.get("HOLMSEC_TOKEN")
-            )
+        body = {
+            "json": {
+                "name": "Scan via API",
+                "profile_uuid": profile,
+                "webapp_asset_uuid": asset,
+            }
         }
-        data = {
-            "name": "Test server scan",
-            "profile_uuid": profile,
-            "webapp_asset_uuid": asset,
-        }
-
-        log.debug("Sending to {0}".format(url))
-        log.debug("JSON data: {0}".format(data))
-
-        response = self.controller.session.post(url, headers=headers, json=data)
-
+        response = self.controller.post(url, **body)
         return response.json()

@@ -82,6 +82,10 @@ class Controller(object):
         self.scan = Scan(self)
         self.webscan = Webscan(self)
 
+        self.default_headers = {
+            "Authorization": "Token {0}".format(self.conf.get("HOLMSEC_TOKEN"))
+        }
+
     def _load_config(self):
         """
         Load configuration from configuration files and environment variables.
@@ -158,3 +162,21 @@ class Controller(object):
         anyconfig.merge(conf, {k: v for k, v in environ.items() if k in CONFIGURABLES})
 
         return conf
+
+    def get(self, url, **kwargs):
+        kwargs.setdefault("headers", {}).update(self.default_headers)
+
+        log.debug("URL query and HTTP headers: {0}".format(kwargs))
+        log.debug("Sending to {0}".format(url))
+
+        response = self.session.get(url, **kwargs)
+        return response
+
+    def post(self, url, **kwargs):
+        kwargs.setdefault("headers", {}).update(self.default_headers)
+
+        log.debug("URL query, HTTP request body and HTTP headers: {0}".format(kwargs))
+        log.debug("Sending to {0}".format(url))
+
+        response = self.session.post(url, **kwargs)
+        return response
