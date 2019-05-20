@@ -38,6 +38,7 @@ Usage:
 
 Available commands are:
     net                 Work with hosts and networks
+    web                 Work with websites
 
 Options:
     -h, --help          Show this help message and exit
@@ -87,6 +88,47 @@ Options:
     -q, --quiet         Suppress terminal output
 """
 
+
+web_args = """
+Usage:
+    holmscan web [(asset || profile || scan)] [options] [<args> ...]
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
+
+web_asset_args = """
+Usage:
+    holmscan web asset list [options]
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
+
+web_profile_args = """
+Usage:
+    holmscan web profile list [options]
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
+
+web_scan_args = """
+Usage:
+    holmscan web scan list [options]
+    holmscan web scan start [options] <asset> <profile>
+
+Arguments:
+    <asset>             Asset ID
+    <profile>           Profile ID
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
 Options:
     -h, --help          Show this help message and exit
     -q, --quiet         Suppress terminal output
@@ -131,6 +173,18 @@ def parse_cli():
         else:
             extras(
                 True, holmscan.__version__, [Option("-h", "--help", 0, True)], net_args
+            )
+    elif cli_args["<command>"] == "web":
+        sub_args = docopt(web_args, argv=argv)
+        if sub_args["asset"]:
+            sub_args = docopt(web_asset_args, argv=argv)
+        elif sub_args["profile"]:
+            sub_args = docopt(web_profile_args, argv=argv)
+        elif sub_args["scan"]:
+            sub_args = docopt(web_scan_args, argv=argv)
+        else:
+            extras(
+                True, holmscan.__version__, [Option("-h", "--help", 0, True)], web_args
             )
     else:
         extras(True, holmscan.__version__, [Option("-h", "--help", 0, True)], base_args)
@@ -195,6 +249,43 @@ def run(cli_args, sub_args):
                 print(pformat(data))
                 filtered = [[v] for k, v in data.items()]
                 print(tabulate(filtered, headers=['UUID'], **tabulate_args))
+        elif cli_args["<command>"] == "web" and sub_args.get("asset", False):
+            data = c.webscan.get_web_assets()
+            log.debug(pformat(data))
+            filtered = [[x["name"], x["uuid"]] for x in data["results"]]
+            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
+        elif cli_args["<command>"] == "web" and sub_args.get("profile", False):
+            data = c.webscan.get_web_profiles()
+            log.debug(pformat(data))
+            filtered = [[x["name"], x["uuid"]] for x in data]
+            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
+        elif cli_args["<command>"] == "web" and sub_args.get("scan", False):
+            if sub_args["list"]:
+                data = c.webscan.list_web_scans()
+                log.debug(pformat(data))
+                filtered = [
+                    [
+                        x["started_date"],
+                        x["finished_date"],
+                        x["status"],
+                        x["vulnerabilities_count"],
+                        x["uuid"],
+                    ]
+                    for x in data["results"]
+                ]
+                print(
+                    tabulate(
+                        filtered,
+                        headers=["Start", "Finished", "Status", "Vulns", "UUID"],
+                        **tabulate_args
+                    )
+                )
+            elif sub_args["start"]:
+                data = c.webscan.start_web_scan(
+                    asset=sub_args["<asset>"], profile=sub_args["<profile>"]
+                )
+                log.debug(pformat(data))
+                print(tabulate(data))
     except (
         HolmscanConfigException,
         HolmscanDataException,

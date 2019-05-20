@@ -11,6 +11,7 @@ import re
 # holmscan imports
 from holmscan.exceptions import HolmscanConfigException
 from holmscan.scan import Scan
+from holmscan.webscan import Webscan
 
 # 3rd party imports
 import anyconfig
@@ -79,6 +80,7 @@ class Controller(object):
 
         self.session = requests.session()
         self.scan = Scan(self)
+        self.webscan = Webscan(self)
 
     def _load_config(self):
         """
