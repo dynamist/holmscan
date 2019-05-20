@@ -303,8 +303,8 @@ def run(cli_args, sub_args):
                 data = c.webscan.start_web_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
-                log.debug(pformat(data))
-                print(tabulate(data))
+                filtered = [[v] for k, v in data.items()]
+                print(tabulate(filtered, headers=["UUID"], **tabulate_args))
 #        elif cli_args["<command>"] == "web" and sub_args.get("schedule", False):
 #            data = c.webscan.get_web_schedules()
 #            log.debug(pformat(data))
