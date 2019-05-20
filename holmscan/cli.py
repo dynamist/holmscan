@@ -6,6 +6,8 @@ holmscan
 A simple Python tool to interact with Holm Security VMP
 """
 
+from __future__ import print_function
+
 # python std library
 import logging
 import logging.config
@@ -162,7 +164,7 @@ def run(cli_args, sub_args):
         HolmscanDataException,
         HolmscanRemoteException,
     ) as e:
-        print(e)
+        print(e, file=sys.stderr)
         retcode = 1
 
     return retcode
