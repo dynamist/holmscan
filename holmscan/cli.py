@@ -24,7 +24,7 @@ from holmscan.exceptions import (
 )
 
 # 3rd party imports
-from docopt import docopt
+from docopt import docopt, extras, Option, DocoptExit
 from tabulate import tabulate
 
 
@@ -148,6 +148,10 @@ Options:
 """
 
 
+def _print_usage(text):
+    extras(True, holmscan.__version__, [Option("-h", "--help", 0, True)], text)
+
+
 def parse_cli():
     """
     Parse the CLI arguments and options.
@@ -156,14 +160,12 @@ def parse_cli():
 
     global log
 
-    from docopt import extras, Option, DocoptExit
-
     try:
         cli_args = docopt(
             base_args, options_first=True, version=holmscan.__version__, help=True
         )
     except DocoptExit:
-        extras(True, holmscan.__version__, [Option("-h", "--help", 0, True)], base_args)
+        _print_usage(base_args)
 
     argv = [cli_args["<command>"]] + cli_args["<args>"]
 
@@ -186,9 +188,7 @@ def parse_cli():
         #elif sub_args["schedule"]:
         #    sub_args = docopt(net_schedule_args, argv=argv)
         else:
-            extras(
-                True, holmscan.__version__, [Option("-h", "--help", 0, True)], net_args
-            )
+            _print_usage(net_args)
     elif cli_args["<command>"] == "web":
         sub_args = docopt(web_args, argv=argv)
         if sub_args["asset"]:
@@ -200,11 +200,9 @@ def parse_cli():
         #elif sub_args["schedule"]:
         #    sub_args = docopt(web_schedule_args, argv=argv)
         else:
-            extras(
-                True, holmscan.__version__, [Option("-h", "--help", 0, True)], web_args
-            )
+            _print_usage(web_args)
     else:
-        extras(True, holmscan.__version__, [Option("-h", "--help", 0, True)], base_args)
+        _print_usage(base_args)
         sys.exit(1)
 
     return (cli_args, sub_args)
