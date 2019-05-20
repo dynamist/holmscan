@@ -6,7 +6,6 @@ import logging
 import re
 
 # holmscan imports
-from holmscan.decorators import login
 from holmscan.interface import HolmscanModule
 
 log = logging.getLogger(__name__)
@@ -16,73 +15,80 @@ class Scan(HolmscanModule):
     def __init__(self, controller):
         super(Scan, self).__init__(controller)
 
-    @login
-    def get_web_scan(self, id):
-        url = u"{0}scan/wruns/{1}".format(self.controller.conf.get("HOLMSEC_URL"), id)
+    def get_net_assets(self):
+        url = "{}/net-scans/assets".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
+        headers = {
+            "Authorization": "Token {}".format(
+                self.controller.conf.get("HOLMSEC_TOKEN")
+            )
+        }
+        response = self.controller.session.get(url, headers=headers)
 
-        response = self.controller.session.get(url).text
+        log.debug("Sending to {}".format(url))
 
-        return response
+        return response.json()
 
-    @login
-    def start_web_scan(self, **kwargs):
-        data = kwargs
-        data["assets"] = kwargs["assets"]
-        data.update(
-            {
-                "appliance": "-1",
-                "source": 0,
-                "node": "",
-                "user": "{0}".format(self.user_id),
-                "start_date": None,
-            }
+    def get_net_profiles(self):
+        url = "{}/net-scans/scan-profiles".format(
+            self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
+        log.debug("Sending to {}".format(url))
+        headers = {
+            "Authorization": "Token {}".format(
+                self.controller.conf.get("HOLMSEC_TOKEN")
+            )
+        }
+        response = self.controller.session.get(url, headers=headers)
 
-        job_url = u"{0}scan/wscans/".format(self.controller.conf.get("HOLMSEC_URL"))
-        job_response = self.controller.session.post(
-            job_url,
-            data=json.dumps(data).replace(" ", ""),
-            headers={"Content-Type": "application/json"},
+        return response.json()
+
+    def get_net_schedules(self):
+        url = "{}/net-scans/schedules".format(
+            self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
+        log.debug("Sending to {}".format(url))
+        headers = {
+            "Authorization": "Token {}".format(
+                self.controller.conf.get("HOLMSEC_TOKEN")
+            )
+        }
+        response = self.controller.session.get(url, headers=headers)
 
-        job_id = json.loads(job_response.text)["id"]
-        start_url = u"{0}scan/start/{1}/".format(
-            self.controller.conf.get("HOLMSEC_URL"), job_id
-        )
-        start_response = self.controller.session.get(start_url)
-        return json.loads(start_response.text)["run"]
+        return response.json()
 
-    @login
-    def get_asset_id(self, name):
-        """Return the ID of an asset.
+    def list_net_scans(self):
+        url = "{}/net-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
+        log.debug("Sending to {}".format(url))
+        headers = {
+            "Authorization": "Token {}".format(
+                self.controller.conf.get("HOLMSEC_TOKEN")
+            )
+        }
+        # FIXME handle pagination (see next, previous)
+        payload = {
+            'limit': 10000,
+        }
 
-        This method first tries normal assets, then tries webapp assets.
-        """
-        assets_url = u"{0}assets/assets/".format(
-            self.controller.conf.get("HOLMSEC_URL")
-        )
-        assets = json.loads(self.controller.session.get(assets_url).text)
-        for asset in assets["results"]:
-            # TODO: is case insensitive a good thing for asset names?
-            if name.lower() == asset["name"].lower():
-                return asset["id"]
+        response = self.controller.session.get(url, headers=headers, params=payload)
 
-        webapps_url = u"{0}scan/webapps/".format(
-            self.controller.conf.get("HOLMSEC_URL")
-        )
-        webapps = json.loads(self.controller.session.get(webapps_url).text)
-        for webapp in webapps["results"]:
-            if name == webapp["name"]:
-                return webapp["asset"]["id"]
+        return response.json()
 
-        return None
+    def start_net_scan(self, asset, profile):
+        url = "{}/net-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
+        headers = {
+            "Authorization": "Token {}".format(
+                self.controller.conf.get("HOLMSEC_TOKEN")
+            )
+        }
+        data = {
+            "included_assets": [asset],
+            "name": "Test server scan",
+            "profile_uuid": profile,
+        }
 
-    @property
-    def user_id(self):
-        """Return the ID of the currently logged in user."""
-        url = u"{0}users/user/profile".format(self.controller.conf.get("HOLMSEC_URL"))
+        log.debug("Sending to {}".format(url))
+        log.debug("JSON data: {0}".format(data))
 
-        # TODO properly handle if we are not logged in
-        response = json.loads(self.controller.session.get(url).text)["user"]
+        response = self.controller.session.post(url, headers=headers, json=data)
 
-        return response
+        return response.json()

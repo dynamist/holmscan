@@ -31,7 +31,7 @@ Usage:
     holmscan [-v ...] [options] <command> [<args> ...]
 
 Available commands are:
-    kaboom              Scan
+    net                 Work with hosts and networks
 
 Options:
     -h, --help          Show this help message and exit
@@ -40,9 +40,46 @@ Options:
     -V, --version       Display the version number and exit
 """
 
-kaboom_args = """
+net_args = """
 Usage:
-    holmscan kaboom [options] <asset>
+    holmscan net [(asset || profile || scan)] [options] [<args> ...]
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
+
+net_asset_args = """
+Usage:
+    holmscan net asset list [options]
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
+
+net_profile_args = """
+Usage:
+    holmscan net profile list [options]
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
+
+net_scan_args = """
+Usage:
+    holmscan net scan list [(running || completed || all)] [options]
+    holmscan net scan start [options] <asset> <profile>
+
+Arguments:
+    <asset>             Asset ID
+    <profile>           Profile ID
+
+Options:
+    -h, --help          Show this help message and exit
+    -q, --quiet         Suppress terminal output
+"""
 
 Options:
     -h, --help          Show this help message and exit
@@ -77,10 +114,18 @@ def parse_cli():
     log.debug("Setting verbose level: {0}".format(cli_args["--verbose"]))
     log.debug("Arguments from CLI: \n{0}".format(pformat(cli_args)))
 
-    if cli_args["<command>"] == "kaboom":
-        sub_args = docopt(
-            eval("{sub}_args".format(sub=cli_args["<command>"])), argv=argv
-        )
+    if cli_args["<command>"] == "net":
+        sub_args = docopt(net_args, argv=argv)
+        if sub_args["asset"]:
+            sub_args = docopt(net_asset_args, argv=argv)
+        elif sub_args["profile"]:
+            sub_args = docopt(net_profile_args, argv=argv)
+        elif sub_args["scan"]:
+            sub_args = docopt(net_scan_args, argv=argv)
+        else:
+            extras(
+                True, holmscan.__version__, [Option("-h", "--help", 0, True)], net_args
+            )
     else:
         extras(True, holmscan.__version__, [Option("-h", "--help", 0, True)], base_args)
         sys.exit(1)
@@ -97,18 +142,21 @@ def run(cli_args, sub_args):
     try:
         c = Controller()
 
-        if cli_args["<command>"] == "kaboom":
-            asset = c.scan.get_asset_id(sub_args["<asset>"])
-            scan_id = c.scan.start_web_scan(
-                name="{0} Job".format(sub_args["<asset>"]),
-                schedule_is_active=False,
-                node_source_overrides=False,
-                is_was_discovery=True,
-                assets=[asset],
-                scheduled=False,
-            )
-            print(c.scan.get_web_scan(scan_id))
-
+        if cli_args["<command>"] == "net" and sub_args.get("asset", False):
+            data = c.scan.get_net_assets()
+            log.debug(pformat(data))
+        elif cli_args["<command>"] == "net" and sub_args.get("profile", False):
+            data = c.scan.get_net_profiles()
+            log.debug(pformat(data))
+        elif cli_args["<command>"] == "net" and sub_args.get("scan", False):
+            if sub_args["list"]:
+                data = c.scan.list_net_scans()
+                log.debug(pformat(data))
+            elif sub_args["start"]:
+                data = c.scan.start_net_scan(
+                    asset=sub_args["<asset>"], profile=sub_args["<profile>"]
+                )
+                print(pformat(data))
     except (
         HolmscanConfigException,
         HolmscanDataException,
