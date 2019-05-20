@@ -65,9 +65,7 @@ class Scan(HolmscanModule):
             )
         }
         # FIXME handle pagination (see next, previous)
-        payload = {
-            'limit': 10000,
-        }
+        payload = {"limit": 10000}
 
         response = self.controller.session.get(url, headers=headers, params=payload)
 

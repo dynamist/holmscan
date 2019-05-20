@@ -248,7 +248,7 @@ def run(cli_args, sub_args):
                         x["uuid"],
                     ]
                     for x in data["results"]
-                    if x['status'] in status
+                    if x["status"] in status
                 ]
                 print(
                     tabulate(
