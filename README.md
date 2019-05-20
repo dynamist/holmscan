@@ -1,8 +1,18 @@
 # holmscan
 
-A simple Python command line tool to interact with [Holm Security VMP](https://www.holmsecurity.com/vulnerability-assessment).
+A simple Python command line tool to interact with [Holm Security VMP](https://www.holmsecurity.com/vulnerability-assessment) and the [Holm Security Platform API](https://se-api.holmsecurity.com/docs/).
 
-Example usage: `holmscan kaboom "Example Host"`
+Example usage:
+
+    holmscan net asset list [options]
+    holmscan net profile list [options]
+    holmscan net scan list [options]
+    holmscan net scan start [options] <asset> <profile>
+
+    holmscan web asset list [options]
+    holmscan web profile list [options]
+    holmscan web scan list [options]
+    holmscan web scan start [options] <asset> <profile>
 
 ## History
 
@@ -10,7 +20,9 @@ The motivation to start this tool is our drive to automate all the things. So na
 
 ![Automate All the Things](https://i.imgur.com/dv5bY2Z.jpg)
 
-We organized a hackathon at our offices and especially made it our goal to contribute to the annual [Hacktoberfest](https://hacktoberfest.digitalocean.com/). This is one of the open source tools we worked on October 23:rd 2018.
+We organized a hackathon at our offices and especially made it our goal to contribute to the annual [Hacktoberfest](https://hacktoberfest.digitalocean.com/). This is one of the open source tools we worked on October 23rd, 2018.
+
+The tool has since then been updated to use the Holm Security Platform API.
 
 ## Scope
 
