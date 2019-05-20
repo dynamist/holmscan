@@ -17,7 +17,7 @@ with open("README.md") as f:
 with open("CHANGELOG.md") as f:
     CHANGELOG = f.read()
 
-install_requires = ["anyconfig", "appdirs", "docopt", "pyyaml", "requests"]
+install_requires = ["anyconfig", "appdirs", "docopt", "pyyaml", "requests", "tabulate"]
 tests_require = []
 download_url = "{}/tarball/v{}".format(
     "https://github.com/dynamist/holmscan", holmscan.__version__
