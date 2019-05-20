@@ -19,7 +19,7 @@ with open("CHANGELOG.md") as f:
 
 install_requires = ["anyconfig", "appdirs", "docopt", "pyyaml", "requests", "tabulate"]
 tests_require = []
-download_url = "{}/tarball/v{}".format(
+download_url = "{0}/tarball/v{1}".format(
     "https://github.com/dynamist/holmscan", holmscan.__version__
 )
 
