@@ -24,9 +24,12 @@ from holmscan.exceptions import (
 
 # 3rd party imports
 from docopt import docopt
+from tabulate import tabulate
 
 
 log = None
+
+tabulate_args = {"tablefmt": "fancy_grid"}
 
 base_args = """
 Usage:
@@ -147,18 +150,41 @@ def run(cli_args, sub_args):
         if cli_args["<command>"] == "net" and sub_args.get("asset", False):
             data = c.scan.get_net_assets()
             log.debug(pformat(data))
+            filtered = [[x["name"], x["uuid"]] for x in data["results"]]
+            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
         elif cli_args["<command>"] == "net" and sub_args.get("profile", False):
             data = c.scan.get_net_profiles()
             log.debug(pformat(data))
+            filtered = [[x["name"], x["uuid"]] for x in data]
+            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
         elif cli_args["<command>"] == "net" and sub_args.get("scan", False):
             if sub_args["list"]:
                 data = c.scan.list_net_scans()
                 log.debug(pformat(data))
+                filtered = [
+                    [
+                        x["started_date"],
+                        x["finished_date"],
+                        x["status"],
+                        x["vulnerabilities_count"],
+                        x["uuid"],
+                    ]
+                    for x in data["results"]
+                ]
+                print(
+                    tabulate(
+                        filtered,
+                        headers=["Start", "Finished", "Status", "Vulns", "UUID"],
+                        **tabulate_args
+                    )
+                )
             elif sub_args["start"]:
                 data = c.scan.start_net_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
                 print(pformat(data))
+                filtered = [[v] for k, v in data.items()]
+                print(tabulate(filtered, headers=['UUID'], **tabulate_args))
     except (
         HolmscanConfigException,
         HolmscanDataException,
