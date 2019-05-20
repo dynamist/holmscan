@@ -149,6 +149,8 @@ Options:
 
 
 def _print_usage(text):
+    import holmscan
+
     extras(True, holmscan.__version__, [Option("-h", "--help", 0, True)], text)
 
 
@@ -185,8 +187,8 @@ def parse_cli():
             sub_args = docopt(net_profile_args, argv=argv)
         elif sub_args["scan"]:
             sub_args = docopt(net_scan_args, argv=argv)
-        #elif sub_args["schedule"]:
-        #    sub_args = docopt(net_schedule_args, argv=argv)
+#        elif sub_args["schedule"]:
+#            sub_args = docopt(net_schedule_args, argv=argv)
         else:
             _print_usage(net_args)
     elif cli_args["<command>"] == "web":
@@ -197,8 +199,8 @@ def parse_cli():
             sub_args = docopt(web_profile_args, argv=argv)
         elif sub_args["scan"]:
             sub_args = docopt(web_scan_args, argv=argv)
-        #elif sub_args["schedule"]:
-        #    sub_args = docopt(web_schedule_args, argv=argv)
+#        elif sub_args["schedule"]:
+#            sub_args = docopt(web_schedule_args, argv=argv)
         else:
             _print_usage(web_args)
     else:
@@ -261,12 +263,11 @@ def run(cli_args, sub_args):
                 data = c.scan.start_net_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
-                print(pformat(data))
                 filtered = [[v] for k, v in data.items()]
-                print(tabulate(filtered, headers=['UUID'], **tabulate_args))
-        #elif cli_args["<command>"] == "net" and sub_args.get("schedule", False):
-        #    data = c.scan.get_net_schedules()
-        #    log.debug(pformat(data))
+                print(tabulate(filtered, headers=["UUID"], **tabulate_args))
+#        elif cli_args["<command>"] == "net" and sub_args.get("schedule", False):
+#            data = c.scan.get_net_schedules()
+#            log.debug(pformat(data))
         elif cli_args["<command>"] == "web" and sub_args.get("asset", False):
             data = c.webscan.get_web_assets()
             log.debug(pformat(data))
@@ -304,9 +305,9 @@ def run(cli_args, sub_args):
                 )
                 log.debug(pformat(data))
                 print(tabulate(data))
-        #elif cli_args["<command>"] == "web" and sub_args.get("schedule", False):
-        #    data = c.webscan.get_web_schedules()
-        #    log.debug(pformat(data))
+#        elif cli_args["<command>"] == "web" and sub_args.get("schedule", False):
+#            data = c.webscan.get_web_schedules()
+#            log.debug(pformat(data))
     except (
         HolmscanConfigException,
         HolmscanDataException,
