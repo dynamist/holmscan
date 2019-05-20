@@ -62,7 +62,7 @@ def init_logging(log_level):
                 "filename": random_log_file,
             },
         },
-        "formatters": {"simple": {"format": " {}".format(msg)}},
+        "formatters": {"simple": {"format": " {0}".format(msg)}},
     }
 
     logging.config.dictConfig(logging_conf)

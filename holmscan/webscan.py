@@ -16,40 +16,42 @@ class Webscan(HolmscanModule):
         super(Webscan, self).__init__(controller)
 
     def get_web_assets(self):
-        url = "{}/web-scans/assets".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
+        url = "{0}/web-scans/assets".format(
+            self.controller.conf.get("HOLMSEC_ENDPOINT")
+        )
         headers = {
-            "Authorization": "Token {}".format(
+            "Authorization": "Token {0}".format(
                 self.controller.conf.get("HOLMSEC_TOKEN")
             )
         }
         response = self.controller.session.get(url, headers=headers)
 
-        log.debug("Sending to {}".format(url))
+        log.debug("Sending to {0}".format(url))
 
         return response.json()
 
     def get_web_profiles(self):
-        url = "{}/web-scans/scan-profiles".format(
+        url = "{0}/web-scans/scan-profiles".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
         headers = {
-            "Authorization": "Token {}".format(
+            "Authorization": "Token {0}".format(
                 self.controller.conf.get("HOLMSEC_TOKEN")
             )
         }
         response = self.controller.session.get(url, headers=headers)
 
-        log.debug("Sending to {}".format(url))
+        log.debug("Sending to {0}".format(url))
 
         return response.json()
 
     def get_web_schedules(self):
-        url = "{}/web-scans/schedules".format(
+        url = "{0}/web-scans/schedules".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")
         )
-        log.debug("Sending to {}".format(url))
+        log.debug("Sending to {0}".format(url))
         headers = {
-            "Authorization": "Token {}".format(
+            "Authorization": "Token {0}".format(
                 self.controller.conf.get("HOLMSEC_TOKEN")
             )
         }
@@ -58,10 +60,10 @@ class Webscan(HolmscanModule):
         return response.json()
 
     def list_web_scans(self):
-        url = "{}/web-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
-        log.debug("Sending to {}".format(url))
+        url = "{0}/web-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
+        log.debug("Sending to {0}".format(url))
         headers = {
-            "Authorization": "Token {}".format(
+            "Authorization": "Token {0}".format(
                 self.controller.conf.get("HOLMSEC_TOKEN")
             )
         }
@@ -73,9 +75,9 @@ class Webscan(HolmscanModule):
         return response.json()
 
     def start_web_scan(self, asset, profile):
-        url = "{}/web-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
+        url = "{0}/web-scans".format(self.controller.conf.get("HOLMSEC_ENDPOINT"))
         headers = {
-            "Authorization": "Token {}".format(
+            "Authorization": "Token {0}".format(
                 self.controller.conf.get("HOLMSEC_TOKEN")
             )
         }
@@ -85,7 +87,7 @@ class Webscan(HolmscanModule):
             "webapp_asset_uuid": asset,
         }
 
-        log.debug("Sending to {}".format(url))
+        log.debug("Sending to {0}".format(url))
         log.debug("JSON data: {0}".format(data))
 
         response = self.controller.session.post(url, headers=headers, json=data)
