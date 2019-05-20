@@ -22,24 +22,18 @@ log = logging.getLogger(__name__)
 logging.getLogger("anyconfig").setLevel(logging.ERROR)
 
 
-CONFIGURABLES = [
-    "HOLMSCAN_DEBUG",
-    "HOLMSEC_PASSWORD",
-    "HOLMSEC_URL",
-    "HOLMSEC_USERNAME",
-]
+CONFIGURABLES = ["HOLMSCAN_DEBUG", "HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
 DEFAULTS = {
     "HOLMSCAN_DEBUG": False,
-    "HOLMSEC_PASSWORD": "",
-    "HOLMSEC_URL": "https://sc.holmsecurity.com/",
-    "HOLMSEC_USERNAME": "",
+    "HOLMSEC_ENDPOINT": "https://se-api.holmsecurity.com/v1",
+    "HOLMSEC_TOKEN": "",
 }
-REQUIRED = ["HOLMSEC_PASSWORD", "HOLMSEC_URL", "HOLMSEC_USERNAME"]
-VALIDATORS = {"HOLMSEC_URL": "^http(s)?://[a-zA-Z0-9._-]+/$"}
-VALID_EXAMPLES = {"HOLMSEC_URL": "example: https://sc.holmsecurity.com/"}
+REQUIRED = ["HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
+VALIDATORS = {"HOLMSEC_ENDPOINT": "^http(s)?://[a-zA-Z0-9._-]+/v[0-9]$"}
+VALID_EXAMPLES = {"HOLMSEC_ENDPOINT": "example: https://se-api.holmsecurity.com/v1"}
 CONFIG_EXAMPLES = {
-    "HOLMSEC_USERNAME": "example: export HOLMSEC_USERNAME=username@example.com",
-    "HOLMSEC_URL": "example: echo HOLMSEC_URL: https://sc.holmsecurity.com/ >> ~/.config/holmscan.yaml",
+    "HOLMSEC_ENDPOINT": "example: echo HOLMSEC_ENDPOINT: https://se-api.holmsecurity.com/v1 >> ~/.config/holmscan.yaml",
+    "HOLMSEC_TOKEN": "example: export HOLMSEC_TOKEN=abcdef40charslongtokenabcdefabcdefabcdef",
 }
 
 
@@ -83,9 +77,6 @@ class Controller(object):
                     error += ", " + example
                 raise HolmscanConfigException(error)
 
-        log.debug("Initialized controller for %s", self.conf.get("HOLMSEC_URL"))
-
-        self.loggedin = False
         self.session = requests.session()
         self.scan = Scan(self)
 
@@ -165,38 +156,3 @@ class Controller(object):
         anyconfig.merge(conf, {k: v for k, v in environ.items() if k in CONFIGURABLES})
 
         return conf
-
-    def _login(self):
-        """
-        """
-        url = u"{0}login/in".format(self.conf.get("HOLMSEC_URL"))
-        username = self.conf.get("HOLMSEC_USERNAME")
-        password = self.conf.get("HOLMSEC_PASSWORD")
-        data = {
-            "username": username,
-            "password": password,
-            "redirect": "",
-            "language": "en",
-        }
-
-        log.debug("Logging in to Security Center at {}".format(url))
-        log.debug("JSON data: {0}".format(data))
-
-        response = self.session.post(url, data=data)
-        log.debug("Response from Security Center: {0}".format(response))
-
-        if response.ok and "doLogout" in response.text:
-            self.loggedin = True
-
-        return self.loggedin
-
-    def _logout(self):
-        """
-        """
-        log.debug("Logging out of Security Center")
-        self.loggedin = False
-
-        # TODO logout is not implemented
-        import NotImplementedError
-
-        raise NotImplementedError
