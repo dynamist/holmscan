@@ -15,6 +15,7 @@ import sys
 from pprint import pformat
 
 # holmscan imports
+from holmscan.constants import SCAN_STATUS_CHOICES
 from holmscan.controller import Controller
 from holmscan.exceptions import (
     HolmscanConfigException,
@@ -161,6 +162,14 @@ def run(cli_args, sub_args):
             if sub_args["list"]:
                 data = c.scan.list_net_scans()
                 log.debug(pformat(data))
+                # FIXME handle pagination (see next, previous)
+                if sub_args["all"]:
+                    status = SCAN_STATUS_CHOICES
+                elif sub_args["completed"]:
+                    status = ["completed"]
+                else:  # default value
+                    status = ["running"]
+
                 filtered = [
                     [
                         x["started_date"],
@@ -170,6 +179,7 @@ def run(cli_args, sub_args):
                         x["uuid"],
                     ]
                     for x in data["results"]
+                    if x['status'] in status
                 ]
                 print(
                     tabulate(
