@@ -220,12 +220,12 @@ def run(cli_args, sub_args):
         if cli_args["<command>"] == "net" and sub_args.get("asset", False):
             data = c.scan.get_net_assets()
             log.debug(pformat(data))
-            filtered = [[x["name"], x["uuid"]] for x in data["results"]]
+            filtered = [[item["name"], item["uuid"]] for item in data["results"]]
             print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
         elif cli_args["<command>"] == "net" and sub_args.get("profile", False):
             data = c.scan.get_net_profiles()
             log.debug(pformat(data))
-            filtered = [[x["name"], x["uuid"]] for x in data]
+            filtered = [[item["name"], item["uuid"]] for item in data]
             print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
         elif cli_args["<command>"] == "net" and sub_args.get("scan", False):
             if sub_args["list"]:
@@ -241,14 +241,14 @@ def run(cli_args, sub_args):
 
                 filtered = [
                     [
-                        x["started_date"],
-                        x["finished_date"],
-                        x["status"],
-                        x["vulnerabilities_count"],
-                        x["uuid"],
+                        item["started_date"],
+                        item["finished_date"],
+                        item["status"],
+                        item["vulnerabilities_count"],
+                        item["uuid"],
                     ]
-                    for x in data["results"]
-                    if x["status"] in status
+                    for item in data["results"]
+                    if item["status"] in status
                 ]
                 print(
                     tabulate(
@@ -270,12 +270,12 @@ def run(cli_args, sub_args):
         elif cli_args["<command>"] == "web" and sub_args.get("asset", False):
             data = c.webscan.get_web_assets()
             log.debug(pformat(data))
-            filtered = [[x["name"], x["uuid"]] for x in data["results"]]
+            filtered = [[item["name"], item["uuid"]] for item in data["results"]]
             print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
         elif cli_args["<command>"] == "web" and sub_args.get("profile", False):
             data = c.webscan.get_web_profiles()
             log.debug(pformat(data))
-            filtered = [[x["name"], x["uuid"]] for x in data]
+            filtered = [[item["name"], item["uuid"]] for item in data]
             print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
         elif cli_args["<command>"] == "web" and sub_args.get("scan", False):
             if sub_args["list"]:
@@ -283,13 +283,13 @@ def run(cli_args, sub_args):
                 log.debug(pformat(data))
                 filtered = [
                     [
-                        x["started_date"],
-                        x["finished_date"],
-                        x["status"],
-                        x["vulnerabilities_count"],
-                        x["uuid"],
+                        item["started_date"],
+                        item["finished_date"],
+                        item["status"],
+                        item["vulnerabilities_count"],
+                        item["uuid"],
                     ]
-                    for x in data["results"]
+                    for item in data["results"]
                 ]
                 print(
                     tabulate(
