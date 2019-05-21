@@ -12,7 +12,7 @@ import tempfile
 
 __author__ = "Henrik Holmboe"
 __email__ = "henrik@dynamist.se"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __url__ = "https://github.com/dynamist/holmscan"
 __devel__ = True
 
