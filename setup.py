@@ -18,7 +18,7 @@ with open("CHANGELOG.md") as f:
     CHANGELOG = f.read()
 
 install_requires = ["anyconfig", "appdirs", "docopt", "pyyaml", "requests", "tabulate"]
-tests_require = []
+tests_require = ["bumpversion"]
 download_url = "{0}/tarball/v{1}".format(
     "https://github.com/dynamist/holmscan", holmscan.__version__
 )
@@ -40,8 +40,8 @@ setup(
     entry_points={"console_scripts": ["holmscan = holmscan.cli:cli_entrypoint"]},
     classifiers=[
         # 'Development Status :: 1 - Planning',
-        "Development Status :: 2 - Pre-Alpha",
-        # 'Development Status :: 3 - Alpha',
+        # "Development Status :: 2 - Pre-Alpha",
+        'Development Status :: 3 - Alpha',
         # 'Development Status :: 4 - Beta',
         # 'Development Status :: 5 - Production/Stable',
         # 'Development Status :: 6 - Mature',
