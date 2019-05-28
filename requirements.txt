@@ -1,0 +1,6 @@
+anyconfig>=0.9.0
+appdirs
+docopt
+pyyaml
+requests
+tabulate
