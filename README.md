@@ -4,6 +4,8 @@ A simple Python command line tool to interact with [Holm Security VMP](https://w
 
 Example usage:
 
+    export HOLMSEC_TOKEN=abcdef40charslongtokenabcdefabcdefabcdef
+
     holmscan net asset list [options]
     holmscan net profile list [options]
     holmscan net scan list [options]
@@ -27,3 +29,39 @@ The tool has since then been updated to use the Holm Security Platform API.
 ## Scope
 
 We intend to implement functionality for this tool to be able to kick off scans in an automated way. The scope is therefore limited but we may expand the scope in the future. Contributions are welcome.
+
+## Installation in a development environment
+
+Install the `virtualenv` and `virtualenvwrapper` software packages.
+
+Ensure to source the correct virtualenvwrapper shell script before installing the development environment, on Ubuntu that would be `source /usr/share/virtualenvwrapper/virtualenvwrapper.sh`.
+
+Create a virtualenv for holmscan running on Python 3.6:
+```
+mkvirtualenv holmscan36 --python=python3.6
+```
+
+Install code in editable mode and pull in all dependencies:
+```
+workon holmscan36
+pip install -e '.[test]'
+```
+
+## Build and run a holmscan Docker images
+
+Build a Docker image:
+```
+docker build -t holmscan .
+```
+
+Run a one-off execution:
+```
+docker run --rm holmscan --help
+docker run --rm -e HOLMSEC_TOKEN=abcdef40charslongtokenabcdefabcdefabcdef holmscan net scan list
+```
+
+## LICENSE
+
+Copyright (c) 2018-2019 Dynamist AB
+
+See the LICENSE file provided with the source distribution for full details.
