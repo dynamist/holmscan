@@ -9,7 +9,7 @@ import os
 import re
 
 # holmscan imports
-from holmscan.exceptions import HolmscanConfigException
+from holmscan.exceptions import HolmscanConfigException, HolmscanRemoteException
 from holmscan.scan import Scan
 from holmscan.webscan import Webscan
 
@@ -170,8 +170,10 @@ class Controller(object):
         log.debug("Sending to {0}".format(url))
 
         response = self.session.get(url, **kwargs)
-        if not response.ok:
-            return False
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise HolmscanRemoteException(str(e)) from e
         return response
 
     def post(self, url, **kwargs):
@@ -181,6 +183,8 @@ class Controller(object):
         log.debug("Sending to {0}".format(url))
 
         response = self.session.post(url, **kwargs)
-        if not response.ok:
-            return False
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise HolmscanRemoteException(str(e)) from e
         return response
