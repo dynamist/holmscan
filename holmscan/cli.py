@@ -77,9 +77,11 @@ Options:
 net_scan_args = """
 Usage:
     holmscan net scan list [(running || completed || all)] [options]
+    holmscan net scan show <uuid> [options]
     holmscan net scan start [options] <asset> <profile>
 
 Arguments:
+    <uuid>              Scan ID
     <asset>             Asset ID
     <profile>           Profile ID
 
@@ -127,9 +129,11 @@ Options:
 web_scan_args = """
 Usage:
     holmscan web scan list [options]
+    holmscan web scan show <uuid> [options]
     holmscan web scan start [options] <asset> <profile>
 
 Arguments:
+    <uuid>              Scan ID
     <asset>             Asset ID
     <profile>           Profile ID
 
@@ -259,6 +263,34 @@ def run(cli_args, sub_args):
                         **tabulate_args
                     )
                 )
+            elif sub_args["show"]:
+                data = c.scan.get_net_scan(uuid=sub_args["<uuid>"])
+                log.debug(pformat(data))
+                columns = [
+                    "started_date",
+                    "duration",
+                    "status",
+                    "vulnerabilities_count",
+                    "scanned_hosts",
+                    "name",
+                ]
+                filtered = []
+                for column in columns:
+                    filtered.append(data[column])
+                print(
+                    tabulate(
+                        [filtered],
+                        headers=[
+                            "Start",
+                            "Duration",
+                            "Status",
+                            "Vulns",
+                            "Hosts",
+                            "Name",
+                        ],
+                        **tabulate_args
+                    )
+                )
             elif sub_args["start"]:
                 data = c.scan.start_net_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
@@ -296,6 +328,26 @@ def run(cli_args, sub_args):
                     tabulate(
                         filtered,
                         headers=["Start", "Finished", "Status", "Vulns", "UUID"],
+                        **tabulate_args
+                    )
+                )
+            elif sub_args["show"]:
+                data = c.webscan.get_web_scan(uuid=sub_args["<uuid>"])
+                log.debug(pformat(data))
+                columns = [
+                    "started_date",
+                    "duration",
+                    "status",
+                    "vulnerabilities_count",
+                    "name",
+                ]
+                filtered = []
+                for column in columns:
+                    filtered.append(data[column])
+                print(
+                    tabulate(
+                        [filtered],
+                        headers=["Start", "Duration", "Status", "Vulns", "Name"],
                         **tabulate_args
                     )
                 )
