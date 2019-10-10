@@ -170,6 +170,8 @@ class Controller(object):
         log.debug("Sending to {0}".format(url))
 
         response = self.session.get(url, **kwargs)
+        if not response.ok:
+            return False
         return response
 
     def post(self, url, **kwargs):
@@ -179,4 +181,6 @@ class Controller(object):
         log.debug("Sending to {0}".format(url))
 
         response = self.session.post(url, **kwargs)
+        if not response.ok:
+            return False
         return response
