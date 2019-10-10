@@ -3,7 +3,6 @@
 # python std lib
 import copy
 from distutils.util import strtobool
-import json
 import logging
 import os
 import re
