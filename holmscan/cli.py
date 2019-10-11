@@ -274,9 +274,7 @@ def run(cli_args, sub_args):
                     "scanned_hosts",
                     "name",
                 ]
-                filtered = []
-                for column in columns:
-                    filtered.append(data[column])
+                filtered = [data[column] for column in columns]
                 print(
                     tabulate(
                         [filtered],
@@ -341,9 +339,7 @@ def run(cli_args, sub_args):
                     "vulnerabilities_count",
                     "name",
                 ]
-                filtered = []
-                for column in columns:
-                    filtered.append(data[column])
+                filtered = [data[column] for column in columns]
                 print(
                     tabulate(
                         [filtered],
