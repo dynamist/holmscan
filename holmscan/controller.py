@@ -85,7 +85,7 @@ class Controller(object):
                 raise HolmscanConfigException(error)
 
         # check validity of configurables
-        for k, v in VALIDATORS.items():
+        for k, _ in VALIDATORS.items():
             if any(
                 [
                     (
