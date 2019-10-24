@@ -15,7 +15,7 @@ import sys
 from pprint import pformat
 
 # holmscan imports
-from holmscan.constants import SCAN_STATUS_CHOICES
+import holmscan.constants as constants
 from holmscan.controller import Controller
 from holmscan.exceptions import (
     HolmscanConfigException,
@@ -26,11 +26,14 @@ from holmscan.exceptions import (
 # 3rd party imports
 from docopt import docopt, extras, Option, DocoptExit
 from tabulate import tabulate
+from yaml import dump
 
 
 log = None
 
 tabulate_args = {"tablefmt": "fancy_grid"}
+yaml_dump_args = {"indent": 2, "sort_keys": False}
+print_format = "table"
 
 base_args = """
 Usage:
@@ -148,6 +151,21 @@ Options:
 """
 
 
+def _print_format(data, headers):
+    if print_format == constants.OUTPUT_FORMAT_TABLE:
+        print(tabulate(data, headers, **tabulate_args))
+    elif print_format == constants.OUTPUT_FORMAT_YAML:
+        data_with_headers = []
+        for scan in data:
+            scan_with_headers = {}
+            for header, entry in zip(headers, scan):
+                scan_with_headers[header] = entry
+            data_with_headers.append(scan_with_headers)
+        print(dump(data_with_headers, **yaml_dump_args))
+    else:
+        raise HolmscanConfigException("unsupported print format")
+
+
 def _print_usage(text):
     import holmscan
 
@@ -219,6 +237,9 @@ def run(cli_args, sub_args):
     try:
         c = Controller()
 
+        global print_format
+        print_format = c.conf["HOLMSCAN_FORMAT"]
+
         if cli_args["<command>"] == "net" and sub_args.get("asset", False):
             data = c.scan.get_net_assets()
             log.debug(pformat(data))
@@ -235,7 +256,7 @@ def run(cli_args, sub_args):
                 log.debug(pformat(data))
                 # FIXME handle pagination (see next, previous)
                 if sub_args["all"]:
-                    status = SCAN_STATUS_CHOICES
+                    status = constants.SCAN_STATUS_CHOICES
                 elif sub_args["completed"]:
                     status = ["completed"]
                 else:  # default value
@@ -252,12 +273,9 @@ def run(cli_args, sub_args):
                     for item in data["results"]
                     if item["status"] in status
                 ]
-                print(
-                    tabulate(
-                        filtered,
-                        headers=["Start", "Finished", "Status", "Vulns", "UUID"],
-                        **tabulate_args
-                    )
+                _print_format(
+                    filtered,
+                    headers=["Start", "Finished", "Status", "Vulns", "UUID"],
                 )
             elif sub_args["start"]:
                 data = c.scan.start_net_scan(

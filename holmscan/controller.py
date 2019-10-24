@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 # python std lib
 import copy
 from distutils.util import strtobool
@@ -9,6 +11,7 @@ import os
 import re
 
 # holmscan imports
+import holmscan.constants as constants
 from holmscan.exceptions import HolmscanConfigException
 from holmscan.scan import Scan
 from holmscan.webscan import Webscan
@@ -23,16 +26,29 @@ log = logging.getLogger(__name__)
 logging.getLogger("anyconfig").setLevel(logging.ERROR)
 
 
-CONFIGURABLES = ["HOLMSCAN_DEBUG", "HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
+CONFIGURABLES = [
+    "HOLMSCAN_DEBUG",
+    "HOLMSCAN_FORMAT",
+    "HOLMSEC_ENDPOINT",
+    "HOLMSEC_TOKEN",
+]
 DEFAULTS = {
     "HOLMSCAN_DEBUG": False,
+    "HOLMSCAN_FORMAT": constants.OUTPUT_FORMAT_TABLE,
     "HOLMSEC_ENDPOINT": "https://se-api.holmsecurity.com/v1",
     "HOLMSEC_TOKEN": "",
 }
-REQUIRED = ["HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
-VALIDATORS = {"HOLMSEC_ENDPOINT": "^http(s)?://[a-zA-Z0-9._-]+/v[0-9]$"}
-VALID_EXAMPLES = {"HOLMSEC_ENDPOINT": "example: https://se-api.holmsecurity.com/v1"}
+REQUIRED = ["HOLMSCAN_FORMAT", "HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
+VALIDATORS = {
+    "HOLMSCAN_FORMAT": ["table", "yaml"],
+    "HOLMSEC_ENDPOINT": "^http(s)?://[a-zA-Z0-9._-]+/v[0-9]$",
+}
+VALID_EXAMPLES = {
+    "HOLMSCAN_FORMAT": "example: table, yaml",
+    "HOLMSEC_ENDPOINT": "example: https://se-api.holmsecurity.com/v1",
+}
 CONFIG_EXAMPLES = {
+    "HOLMSCAN_FORMAT": "example: echo HOLMSCAN_FORMAT: yaml >> ~/.config/holmscan.yaml",
     "HOLMSEC_ENDPOINT": "example: echo HOLMSEC_ENDPOINT: https://se-api.holmsecurity.com/v1 >> ~/.config/holmscan.yaml",
     "HOLMSEC_TOKEN": "example: export HOLMSEC_TOKEN=abcdef40charslongtokenabcdefabcdefabcdef",
 }
@@ -71,8 +87,19 @@ class Controller(object):
 
         # check validity of configurables
         for k, v in VALIDATORS.items():
-            if not re.match(VALIDATORS[k], self.conf[k]):
-                error = "{0} is malformed".format(k)
+            if any(
+                [
+                    (
+                        isinstance(VALIDATORS[k], str)
+                        and not re.match(VALIDATORS[k], self.conf[k])
+                    ),
+                    (
+                        isinstance(VALIDATORS[k], list)
+                        and not self.conf[k] in VALIDATORS[k]
+                    ),
+                ]
+            ):
+                error = "{0} \"{1}\" is malformed".format(k, self.conf[k])
                 example = VALID_EXAMPLES.get(k)
                 if example:
                     error += ", " + example

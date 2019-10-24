@@ -1,3 +1,7 @@
 # -*- coding: utf-8 -*-
 
 SCAN_STATUS_CHOICES = ["completed", "running"]
+
+OUTPUT_FORMAT_YAML = "yaml"
+OUTPUT_FORMAT_TABLE = "table"
+OUTPUT_FORMAT_CHOICES = [OUTPUT_FORMAT_YAML, OUTPUT_FORMAT_TABLE]
