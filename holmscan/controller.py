@@ -8,6 +8,7 @@ from distutils.util import strtobool
 import logging
 import os
 import re
+import time
 
 # holmscan imports
 import holmscan.constants as constants
@@ -195,7 +196,16 @@ class Controller(object):
         log.debug("URL query and HTTP headers: {0}".format(kwargs))
         log.debug("Sending to {0}".format(url))
 
-        response = self.session.get(url, **kwargs)
+        try:
+            t0 = time.time()
+            response = self.session.get(url, **kwargs)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise HolmscanRemoteException(str(e)) from e
+        finally:
+            t1 = time.time()
+            log.debug("Request took {:.4f} seconds".format(t1 - t0))
+
         return response
 
     def post(self, url, **kwargs):
@@ -204,5 +214,14 @@ class Controller(object):
         log.debug("URL query, HTTP request body and HTTP headers: {0}".format(kwargs))
         log.debug("Sending to {0}".format(url))
 
-        response = self.session.post(url, **kwargs)
+        try:
+            t0 = time.time()
+            response = self.session.post(url, **kwargs)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise HolmscanRemoteException(str(e)) from e
+        finally:
+            t1 = time.time()
+            log.debug("Request took {:.4f} seconds".format(t1 - t0))
+
         return response

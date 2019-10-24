@@ -13,6 +13,13 @@ class Webscan(HolmscanModule):
     def __init__(self, controller):
         super(Webscan, self).__init__(controller)
 
+    def get_web_scan(self, uuid):
+        url = "{0}/web-scans/{1}".format(
+            self.controller.conf.get("HOLMSEC_ENDPOINT"), uuid
+        )
+        response = self.controller.get(url)
+        return response.json()
+
     def get_web_assets(self):
         url = "{0}/web-scans/assets".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")

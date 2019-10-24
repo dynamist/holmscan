@@ -80,9 +80,11 @@ Options:
 net_scan_args = """
 Usage:
     holmscan net scan list [(running || completed || error || all)] [options]
+    holmscan net scan show <uuid> [options]
     holmscan net scan start [options] <asset> <profile>
 
 Arguments:
+    <uuid>              Scan ID
     <asset>             Asset ID
     <profile>           Profile ID
 
@@ -130,9 +132,11 @@ Options:
 web_scan_args = """
 Usage:
     holmscan web scan list [(running || completed || error || all)] [options]
+    holmscan web scan show <uuid> [options]
     holmscan web scan start [options] <asset> <profile>
 
 Arguments:
+    <uuid>              Scan ID
     <asset>             Asset ID
     <profile>           Profile ID
 
@@ -279,6 +283,32 @@ def run(cli_args, sub_args):
                     filtered,
                     headers=["Start", "Finished", "Status", "Vulns", "UUID"],
                 )
+            elif sub_args["show"]:
+                data = c.scan.get_net_scan(uuid=sub_args["<uuid>"])
+                log.debug(pformat(data))
+                columns = [
+                    "started_date",
+                    "duration",
+                    "status",
+                    "vulnerabilities_count",
+                    "scanned_hosts",
+                    "name",
+                ]
+                filtered = [data[column] for column in columns]
+                print(
+                    tabulate(
+                        [filtered],
+                        headers=[
+                            "Start",
+                            "Duration",
+                            "Status",
+                            "Vulns",
+                            "Hosts",
+                            "Name",
+                        ],
+                        **tabulate_args
+                    )
+                )
             elif sub_args["start"]:
                 data = c.scan.start_net_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
@@ -323,6 +353,18 @@ def run(cli_args, sub_args):
                     if item["status"] in status
                 ]
                 _print_format(filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"])
+            elif sub_args["show"]:
+                data = c.webscan.get_web_scan(uuid=sub_args["<uuid>"])
+                log.debug(pformat(data))
+                columns = [
+                    "started_date",
+                    "duration",
+                    "status",
+                    "vulnerabilities_count",
+                    "name",
+                ]
+                filtered = [data[column] for column in columns]
+                _print_format(filtered, headers=["Start", "Duration", "Status", "Vulns", "Name"])
             elif sub_args["start"]:
                 data = c.webscan.start_web_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]

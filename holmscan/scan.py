@@ -13,6 +13,13 @@ class Scan(HolmscanModule):
     def __init__(self, controller):
         super(Scan, self).__init__(controller)
 
+    def get_net_scan(self, uuid):
+        url = "{0}/net-scans/{1}".format(
+            self.controller.conf.get("HOLMSEC_ENDPOINT"), uuid
+        )
+        response = self.controller.get(url)
+        return response.json()
+
     def get_net_assets(self):
         url = "{0}/net-scans/assets".format(
             self.controller.conf.get("HOLMSEC_ENDPOINT")
