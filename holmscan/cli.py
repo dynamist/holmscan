@@ -257,12 +257,12 @@ def run(cli_args, sub_args):
                 # FIXME handle pagination (see next, previous)
                 if sub_args["all"]:
                     status = constants.SCAN_STATUS_CHOICES
-                elif sub_args["completed"]:
-                    status = ["completed"]
-                elif sub_args["error"]:
-                    status = ["error"]
+                elif sub_args[constants.SCAN_STATUS_COMPLETED]:
+                    status = [constants.SCAN_STATUS_COMPLETED]
+                elif sub_args[constants.SCAN_STATUS_ERROR]:
+                    status = [constants.SCAN_STATUS_ERROR]
                 else:  # default value
-                    status = ["running"]
+                    status = [constants.SCAN_STATUS_RUNNING]
 
                 filtered = [
                     [
@@ -305,12 +305,12 @@ def run(cli_args, sub_args):
                 # FIXME handle pagination (see next, previous)
                 if sub_args["all"]:
                     status = constants.SCAN_STATUS_CHOICES
-                elif sub_args["completed"]:
-                    status = ["completed"]
-                elif sub_args["error"]:
-                    status = ["error"]
+                elif sub_args[constants.SCAN_STATUS_COMPLETED]:
+                    status = [constants.SCAN_STATUS_COMPLETED]
+                elif sub_args[constants.SCAN_STATUS_ERROR]:
+                    status = [constants.SCAN_STATUS_ERROR]
                 else:  # default value
-                    status = ["running"]
+                    status = [constants.SCAN_STATUS_RUNNING]
                 filtered = [
                     [
                         item["started_date"],
