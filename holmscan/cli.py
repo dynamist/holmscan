@@ -129,7 +129,7 @@ Options:
 
 web_scan_args = """
 Usage:
-    holmscan web scan list [options]
+    holmscan web scan list [(running || completed || error || all)] [options]
     holmscan web scan start [options] <asset> <profile>
 
 Arguments:
@@ -302,6 +302,15 @@ def run(cli_args, sub_args):
             if sub_args["list"]:
                 data = c.webscan.list_web_scans()
                 log.debug(pformat(data))
+                # FIXME handle pagination (see next, previous)
+                if sub_args["all"]:
+                    status = constants.SCAN_STATUS_CHOICES
+                elif sub_args["completed"]:
+                    status = ["completed"]
+                elif sub_args["error"]:
+                    status = ["error"]
+                else:  # default value
+                    status = ["running"]
                 filtered = [
                     [
                         item["started_date"],
@@ -311,6 +320,7 @@ def run(cli_args, sub_args):
                         item["uuid"],
                     ]
                     for item in data["results"]
+                    if item["status"] in status
                 ]
                 _print_format(filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"])
             elif sub_args["start"]:
