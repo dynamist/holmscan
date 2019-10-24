@@ -280,8 +280,7 @@ def run(cli_args, sub_args):
                     if item["status"] in status
                 ]
                 _print_format(
-                    filtered,
-                    headers=["Start", "Finished", "Status", "Vulns", "UUID"],
+                    filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"]
                 )
             elif sub_args["show"]:
                 data = c.scan.get_net_scan(uuid=sub_args["<uuid>"])
@@ -294,20 +293,10 @@ def run(cli_args, sub_args):
                     "scanned_hosts",
                     "name",
                 ]
-                filtered = [data[column] for column in columns]
-                print(
-                    tabulate(
-                        [filtered],
-                        headers=[
-                            "Start",
-                            "Duration",
-                            "Status",
-                            "Vulns",
-                            "Hosts",
-                            "Name",
-                        ],
-                        **tabulate_args
-                    )
+                filtered = [[data[column] for column in columns]]
+                _print_format(
+                    filtered,
+                    headers=["Start", "Duration", "Status", "Vulns", "Hosts", "Name"],
                 )
             elif sub_args["start"]:
                 data = c.scan.start_net_scan(
@@ -352,7 +341,9 @@ def run(cli_args, sub_args):
                     for item in data["results"]
                     if item["status"] in status
                 ]
-                _print_format(filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"])
+                _print_format(
+                    filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"]
+                )
             elif sub_args["show"]:
                 data = c.webscan.get_web_scan(uuid=sub_args["<uuid>"])
                 log.debug(pformat(data))
@@ -363,8 +354,10 @@ def run(cli_args, sub_args):
                     "vulnerabilities_count",
                     "name",
                 ]
-                filtered = [data[column] for column in columns]
-                _print_format(filtered, headers=["Start", "Duration", "Status", "Vulns", "Name"])
+                filtered = [[data[column] for column in columns]]
+                _print_format(
+                    filtered, headers=["Start", "Duration", "Status", "Vulns", "Name"]
+                )
             elif sub_args["start"]:
                 data = c.webscan.start_web_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
