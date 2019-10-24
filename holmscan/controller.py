@@ -190,8 +190,9 @@ class Controller(object):
 
         return conf
 
-    def get(self, url, **kwargs):
+    def get(self, path, **kwargs):
         kwargs.setdefault("headers", {}).update(self.default_headers)
+        url = "{0}{1}".format(self.conf.get("HOLMSEC_ENDPOINT"), path)
 
         log.debug("URL query and HTTP headers: {0}".format(kwargs))
         log.debug("Sending to {0}".format(url))
@@ -208,8 +209,9 @@ class Controller(object):
 
         return response
 
-    def post(self, url, **kwargs):
+    def post(self, path, **kwargs):
         kwargs.setdefault("headers", {}).update(self.default_headers)
+        url = "{0}{1}".format(self.conf.get("HOLMSEC_ENDPOINT"), path)
 
         log.debug("URL query, HTTP request body and HTTP headers: {0}".format(kwargs))
         log.debug("Sending to {0}".format(url))
