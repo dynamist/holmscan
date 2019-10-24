@@ -90,11 +90,11 @@ class Controller(object):
                 [
                     (
                         isinstance(VALIDATORS[k], str)
-                        and not re.match(VALIDATORS[k], self.conf[k])
+                        and not re.match(VALIDATORS[k], self.conf[k])  # noqa: W503
                     ),
                     (
                         isinstance(VALIDATORS[k], list)
-                        and not self.conf[k] in VALIDATORS[k]
+                        and not self.conf[k] in VALIDATORS[k]   # noqa: W503
                     ),
                 ]
             ):
