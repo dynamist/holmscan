@@ -244,12 +244,12 @@ def run(cli_args, sub_args):
             data = c.scan.get_net_assets()
             log.debug(pformat(data))
             filtered = [[item["name"], item["uuid"]] for item in data["results"]]
-            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
+            _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "net" and sub_args.get("profile", False):
             data = c.scan.get_net_profiles()
             log.debug(pformat(data))
             filtered = [[item["name"], item["uuid"]] for item in data]
-            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
+            _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "net" and sub_args.get("scan", False):
             if sub_args["list"]:
                 data = c.scan.list_net_scans()
@@ -282,7 +282,7 @@ def run(cli_args, sub_args):
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
                 filtered = [[v] for k, v in data.items()]
-                print(tabulate(filtered, headers=["UUID"], **tabulate_args))
+                _print_format(filtered, headers=["UUID"])
 #        elif cli_args["<command>"] == "net" and sub_args.get("schedule", False):
 #            data = c.scan.get_net_schedules()
 #            log.debug(pformat(data))
@@ -290,12 +290,12 @@ def run(cli_args, sub_args):
             data = c.webscan.get_web_assets()
             log.debug(pformat(data))
             filtered = [[item["name"], item["uuid"]] for item in data["results"]]
-            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
+            _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "web" and sub_args.get("profile", False):
             data = c.webscan.get_web_profiles()
             log.debug(pformat(data))
             filtered = [[item["name"], item["uuid"]] for item in data]
-            print(tabulate(filtered, headers=["Name", "UUID"], **tabulate_args))
+            _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "web" and sub_args.get("scan", False):
             if sub_args["list"]:
                 data = c.webscan.list_web_scans()
@@ -310,19 +310,13 @@ def run(cli_args, sub_args):
                     ]
                     for item in data["results"]
                 ]
-                print(
-                    tabulate(
-                        filtered,
-                        headers=["Start", "Finished", "Status", "Vulns", "UUID"],
-                        **tabulate_args
-                    )
-                )
+                _print_format(filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"])
             elif sub_args["start"]:
                 data = c.webscan.start_web_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
                 filtered = [[v] for k, v in data.items()]
-                print(tabulate(filtered, headers=["UUID"], **tabulate_args))
+                _print_format(filtered, headers=["UUID"])
 #        elif cli_args["<command>"] == "web" and sub_args.get("schedule", False):
 #            data = c.webscan.get_web_schedules()
 #            log.debug(pformat(data))
