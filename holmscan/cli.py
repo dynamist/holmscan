@@ -159,7 +159,7 @@ def _print_format(data, headers):
         for scan in data:
             scan_with_headers = {}
             for header, entry in zip(headers, scan):
-                scan_with_headers[header] = entry
+                scan_with_headers[header.lower()] = entry
             data_with_headers.append(scan_with_headers)
         print(dump(data_with_headers, **yaml_dump_args))
     else:
