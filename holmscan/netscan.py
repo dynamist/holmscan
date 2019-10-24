@@ -9,9 +9,9 @@ from holmscan.interface import HolmscanModule
 log = logging.getLogger(__name__)
 
 
-class Scan(HolmscanModule):
+class Netscan(HolmscanModule):
     def __init__(self, controller):
-        super(Scan, self).__init__(controller)
+        super(Netscan, self).__init__(controller)
 
     def get_net_scan(self, uuid):
         url = "{0}/net-scans/{1}".format(

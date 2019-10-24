@@ -245,18 +245,18 @@ def run(cli_args, sub_args):
         print_format = c.conf["HOLMSCAN_FORMAT"]
 
         if cli_args["<command>"] == "net" and sub_args.get("asset", False):
-            data = c.scan.get_net_assets()
+            data = c.netscan.get_net_assets()
             log.debug(pformat(data))
             filtered = [[item["name"], item["uuid"]] for item in data["results"]]
             _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "net" and sub_args.get("profile", False):
-            data = c.scan.get_net_profiles()
+            data = c.netscan.get_net_profiles()
             log.debug(pformat(data))
             filtered = [[item["name"], item["uuid"]] for item in data]
             _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "net" and sub_args.get("scan", False):
             if sub_args["list"]:
-                data = c.scan.list_net_scans()
+                data = c.netscan.list_net_scans()
                 log.debug(pformat(data))
                 # FIXME handle pagination (see next, previous)
                 if sub_args["all"]:
@@ -283,7 +283,7 @@ def run(cli_args, sub_args):
                     filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"]
                 )
             elif sub_args["show"]:
-                data = c.scan.get_net_scan(uuid=sub_args["<uuid>"])
+                data = c.netscan.get_net_scan(uuid=sub_args["<uuid>"])
                 log.debug(pformat(data))
                 columns = [
                     "started_date",
@@ -299,13 +299,13 @@ def run(cli_args, sub_args):
                     headers=["Start", "Duration", "Status", "Vulns", "Hosts", "Name"],
                 )
             elif sub_args["start"]:
-                data = c.scan.start_net_scan(
+                data = c.netscan.start_net_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
                 filtered = [[v] for k, v in data.items()]
                 _print_format(filtered, headers=["UUID"])
 #        elif cli_args["<command>"] == "net" and sub_args.get("schedule", False):
-#            data = c.scan.get_net_schedules()
+#            data = c.netscan.get_net_schedules()
 #            log.debug(pformat(data))
         elif cli_args["<command>"] == "web" and sub_args.get("asset", False):
             data = c.webscan.get_web_assets()

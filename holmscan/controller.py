@@ -13,7 +13,7 @@ import time
 # holmscan imports
 import holmscan.constants as constants
 from holmscan.exceptions import HolmscanConfigException, HolmscanRemoteException
-from holmscan.scan import Scan
+from holmscan.netscan import Netscan
 from holmscan.webscan import Webscan
 
 # 3rd party imports
@@ -106,7 +106,7 @@ class Controller(object):
                 raise HolmscanConfigException(error)
 
         self.session = requests.session()
-        self.scan = Scan(self)
+        self.netscan = Netscan(self)
         self.webscan = Webscan(self)
 
         self.default_headers = {
