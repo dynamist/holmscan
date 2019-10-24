@@ -12,7 +12,7 @@ import time
 
 # holmscan imports
 import holmscan.constants as constants
-from holmscan.exceptions import HolmscanConfigException
+from holmscan.exceptions import HolmscanConfigException, HolmscanRemoteException
 from holmscan.scan import Scan
 from holmscan.webscan import Webscan
 
