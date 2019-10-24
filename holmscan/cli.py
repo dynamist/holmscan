@@ -79,7 +79,7 @@ Options:
 
 net_scan_args = """
 Usage:
-    holmscan net scan list [(running || completed || all)] [options]
+    holmscan net scan list [(running || completed || error || all)] [options]
     holmscan net scan start [options] <asset> <profile>
 
 Arguments:
@@ -259,6 +259,8 @@ def run(cli_args, sub_args):
                     status = constants.SCAN_STATUS_CHOICES
                 elif sub_args["completed"]:
                     status = ["completed"]
+                elif sub_args["error"]:
+                    status = ["error"]
                 else:  # default value
                     status = ["running"]
 
