@@ -120,10 +120,10 @@ class Controller(object):
         Search order, latest has presedence:
 
           1. hard coded defaults
-          2. /etc/holmscan.yaml
-          3. /etc/holmscan.d/*.yaml
-          4. ~/.config/holmscan.yaml
-          5. ~/.config/holmscan.d/*.yaml
+          2. `/etc/holmscan.yaml`
+          3. `/etc/holmscan.d/*.yaml`
+          4. `~/.config/holmscan.yaml`
+          5. `~/.config/holmscan.d/*.yaml`
           6. environment variables
         """
         environ = os.environ.copy()
