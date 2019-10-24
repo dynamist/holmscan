@@ -3,9 +3,6 @@
 # python std lib
 import logging
 
-# holmscan imports
-from holmscan.exceptions import HolmscanRemoteException
-
 log = logging.getLogger(__name__)
 
 

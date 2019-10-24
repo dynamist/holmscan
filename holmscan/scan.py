@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # python std lib
-import json
 import logging
-import re
 
 # holmscan imports
 from holmscan.interface import HolmscanModule
