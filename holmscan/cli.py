@@ -252,19 +252,19 @@ def run(cli_args, sub_args):
         print_format = c.conf["HOLMSCAN_FORMAT"]
 
         if cli_args["<command>"] == "net" and sub_args.get("asset", False):
-            data = c.netscan.get_net_assets()
-            log.debug(pformat(data))
-            filtered = [[item["name"], item["uuid"]] for item in data["results"]]
+            scan_result = c.netscan.get_net_assets()
+            log.debug(pformat(scan_result))
+            filtered = [[item["name"], item["uuid"]] for item in scan_result["results"]]
             _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "net" and sub_args.get("profile", False):
-            data = c.netscan.get_net_profiles()
-            log.debug(pformat(data))
-            filtered = [[item["name"], item["uuid"]] for item in data]
+            scan_result = c.netscan.get_net_profiles()
+            log.debug(pformat(scan_result))
+            filtered = [[item["name"], item["uuid"]] for item in scan_result]
             _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "net" and sub_args.get("scan", False):
             if sub_args["list"]:
-                data = c.netscan.list_net_scans()
-                log.debug(pformat(data))
+                scan_result = c.netscan.list_net_scans()
+                log.debug(pformat(scan_result))
                 # FIXME handle pagination (see next, previous)
                 if sub_args["all"]:
                     status = constants.SCAN_STATUS_CHOICES
@@ -283,15 +283,15 @@ def run(cli_args, sub_args):
                         item["vulnerabilities_count"],
                         item["uuid"],
                     ]
-                    for item in data["results"]
+                    for item in scan_result["results"]
                     if item["status"] in status
                 ]
                 _print_format(
                     filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"]
                 )
             elif sub_args["show"]:
-                data = c.netscan.get_net_scan(uuid=sub_args["<uuid>"])
-                log.debug(pformat(data))
+                scan_result = c.netscan.get_net_scan(uuid=sub_args["<uuid>"])
+                log.debug(pformat(scan_result))
                 columns = [
                     "started_date",
                     "duration",
@@ -300,35 +300,35 @@ def run(cli_args, sub_args):
                     "scanned_hosts",
                     "name",
                 ]
-                filtered = [[data[column] for column in columns]]
+                filtered = [[scan_result[column] for column in columns]]
                 _print_format(
                     filtered,
                     headers=["Start", "Duration", "Status", "Vulns", "Hosts", "Name"],
                 )
             elif sub_args["start"]:
-                data = c.netscan.start_net_scan(
+                scan_result = c.netscan.start_net_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
-                filtered = [[v] for k, v in data.items()]
+                filtered = [[v] for k, v in scan_result.items()]
                 _print_format(filtered, headers=["UUID"])
 # FIXME add schedule functionality: T518
 #        elif cli_args["<command>"] == "net" and sub_args.get("schedule", False):
-#            data = c.netscan.get_net_schedules()
-#            log.debug(pformat(data))
+#            scan_result = c.netscan.get_net_schedules()
+#            log.debug(pformat(scan_result))
         elif cli_args["<command>"] == "web" and sub_args.get("asset", False):
-            data = c.webscan.get_web_assets()
-            log.debug(pformat(data))
-            filtered = [[item["name"], item["uuid"]] for item in data["results"]]
+            scan_result = c.webscan.get_web_assets()
+            log.debug(pformat(scan_result))
+            filtered = [[item["name"], item["uuid"]] for item in scan_result["results"]]
             _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "web" and sub_args.get("profile", False):
-            data = c.webscan.get_web_profiles()
-            log.debug(pformat(data))
-            filtered = [[item["name"], item["uuid"]] for item in data]
+            scan_result = c.webscan.get_web_profiles()
+            log.debug(pformat(scan_result))
+            filtered = [[item["name"], item["uuid"]] for item in scan_result]
             _print_format(filtered, headers=["Name", "UUID"])
         elif cli_args["<command>"] == "web" and sub_args.get("scan", False):
             if sub_args["list"]:
-                data = c.webscan.list_web_scans()
-                log.debug(pformat(data))
+                scan_result = c.webscan.list_web_scans()
+                log.debug(pformat(scan_result))
                 # FIXME handle pagination (see next, previous)
                 if sub_args["all"]:
                     status = constants.SCAN_STATUS_CHOICES
@@ -346,15 +346,15 @@ def run(cli_args, sub_args):
                         item["vulnerabilities_count"],
                         item["uuid"],
                     ]
-                    for item in data["results"]
+                    for item in scan_result["results"]
                     if item["status"] in status
                 ]
                 _print_format(
                     filtered, headers=["Start", "Finished", "Status", "Vulns", "UUID"]
                 )
             elif sub_args["show"]:
-                data = c.webscan.get_web_scan(uuid=sub_args["<uuid>"])
-                log.debug(pformat(data))
+                scan_result = c.webscan.get_web_scan(uuid=sub_args["<uuid>"])
+                log.debug(pformat(scan_result))
                 columns = [
                     "started_date",
                     "duration",
@@ -362,20 +362,20 @@ def run(cli_args, sub_args):
                     "vulnerabilities_count",
                     "name",
                 ]
-                filtered = [[data[column] for column in columns]]
+                filtered = [[scan_result[column] for column in columns]]
                 _print_format(
                     filtered, headers=["Start", "Duration", "Status", "Vulns", "Name"]
                 )
             elif sub_args["start"]:
-                data = c.webscan.start_web_scan(
+                scan_result = c.webscan.start_web_scan(
                     asset=sub_args["<asset>"], profile=sub_args["<profile>"]
                 )
-                filtered = [[v] for k, v in data.items()]
+                filtered = [[v] for k, v in scan_result.items()]
                 _print_format(filtered, headers=["UUID"])
 # FIXME add schedule functionality: T518
 #        elif cli_args["<command>"] == "web" and sub_args.get("schedule", False):
-#            data = c.webscan.get_web_schedules()
-#            log.debug(pformat(data))
+#            scan_result = c.webscan.get_web_schedules()
+#            log.debug(pformat(scan_result))
     except (
         HolmscanConfigException,
         HolmscanDataException,
