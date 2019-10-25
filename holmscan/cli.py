@@ -211,6 +211,7 @@ def parse_cli():
             sub_args = docopt(net_profile_args, argv=argv)
         elif sub_args["scan"]:
             sub_args = docopt(net_scan_args, argv=argv)
+# FIXME add schedule functionality: T518
 #        elif sub_args["schedule"]:
 #            sub_args = docopt(net_schedule_args, argv=argv)
         else:
@@ -223,6 +224,7 @@ def parse_cli():
             sub_args = docopt(web_profile_args, argv=argv)
         elif sub_args["scan"]:
             sub_args = docopt(web_scan_args, argv=argv)
+# FIXME add schedule functionality: T518
 #        elif sub_args["schedule"]:
 #            sub_args = docopt(web_schedule_args, argv=argv)
         else:
@@ -306,6 +308,7 @@ def run(cli_args, sub_args):
                 )
                 filtered = [[v] for k, v in data.items()]
                 _print_format(filtered, headers=["UUID"])
+# FIXME add schedule functionality: T518
 #        elif cli_args["<command>"] == "net" and sub_args.get("schedule", False):
 #            data = c.netscan.get_net_schedules()
 #            log.debug(pformat(data))
@@ -366,6 +369,7 @@ def run(cli_args, sub_args):
                 )
                 filtered = [[v] for k, v in data.items()]
                 _print_format(filtered, headers=["UUID"])
+# FIXME add schedule functionality: T518
 #        elif cli_args["<command>"] == "web" and sub_args.get("schedule", False):
 #            data = c.webscan.get_web_schedules()
 #            log.debug(pformat(data))
