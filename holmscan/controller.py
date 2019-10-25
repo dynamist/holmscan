@@ -99,7 +99,7 @@ class Controller(object):
                     ),
                 ]
             ):
-                error = "{0} \"{1}\" is malformed".format(k, self.conf[k])
+                error = '{0} "{1}" is malformed'.format(k, self.conf[k])
                 example = VALID_EXAMPLES.get(k)
                 if example:
                     error += ", " + example
