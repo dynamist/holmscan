@@ -160,10 +160,13 @@ def _print_format(data, headers):
         print(tabulate(data, headers, **tabulate_args))
     elif print_format == constants.OUTPUT_FORMAT_YAML:
         data_with_headers = []
+
         for scan in data:
             scan_with_headers = {}
+
             for header, entry in zip(headers, scan):
                 scan_with_headers[header.lower()] = entry
+
             data_with_headers.append(scan_with_headers)
         print(yaml.dump(data_with_headers, **yaml_dump_args))
     else:
