@@ -11,7 +11,7 @@ import re
 import time
 
 # holmscan imports
-import holmscan.constants as constants
+from holmscan import constants
 from holmscan.exceptions import HolmscanConfigException, HolmscanRemoteException
 from holmscan.netscan import Netscan
 from holmscan.webscan import Webscan

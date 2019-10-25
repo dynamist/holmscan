@@ -15,7 +15,7 @@ import sys
 from pprint import pformat
 
 # holmscan imports
-import holmscan.constants as constants
+from holmscan import constants
 from holmscan.controller import Controller
 from holmscan.exceptions import (
     HolmscanConfigException,
