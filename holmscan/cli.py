@@ -167,7 +167,9 @@ def _print_format(data, headers):
             data_with_headers.append(scan_with_headers)
         print(yaml.dump(data_with_headers, **yaml_dump_args))
     else:
-        raise HolmscanConfigException("unsupported print format")
+        raise HolmscanConfigException(
+            "unsupported print format: {0}".format(print_format)
+        )
 
 
 def _print_usage(text):
