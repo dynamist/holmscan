@@ -26,7 +26,7 @@ from holmscan.exceptions import (
 # 3rd party imports
 from docopt import docopt, extras, Option, DocoptExit
 from tabulate import tabulate
-from yaml import dump
+import yaml
 
 
 log = None
@@ -165,7 +165,7 @@ def _print_format(data, headers):
             for header, entry in zip(headers, scan):
                 scan_with_headers[header.lower()] = entry
             data_with_headers.append(scan_with_headers)
-        print(dump(data_with_headers, **yaml_dump_args))
+        print(yaml.dump(data_with_headers, **yaml_dump_args))
     else:
         raise HolmscanConfigException("unsupported print format")
 
