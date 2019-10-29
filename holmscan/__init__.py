@@ -27,9 +27,11 @@ log_level_to_string_map = {
 
 random_log_file = os.path.join(
     tempfile.gettempdir(),
-    "holmscan-"
-    + "".join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(12))
-    + ".log",
+    (
+        "holmscan-" +
+        "".join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(12)) +
+        ".log"
+    ),
 )
 
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 # python std lib
 import copy
 from distutils.util import strtobool
@@ -9,8 +11,9 @@ import re
 import time
 
 # holmscan imports
+from holmscan import constants
 from holmscan.exceptions import HolmscanConfigException, HolmscanRemoteException
-from holmscan.scan import Scan
+from holmscan.netscan import Netscan
 from holmscan.webscan import Webscan
 
 # 3rd party imports
@@ -23,16 +26,29 @@ log = logging.getLogger(__name__)
 logging.getLogger("anyconfig").setLevel(logging.ERROR)
 
 
-CONFIGURABLES = ["HOLMSCAN_DEBUG", "HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
+CONFIGURABLES = [
+    "HOLMSCAN_DEBUG",
+    "HOLMSCAN_FORMAT",
+    "HOLMSEC_ENDPOINT",
+    "HOLMSEC_TOKEN",
+]
 DEFAULTS = {
     "HOLMSCAN_DEBUG": False,
+    "HOLMSCAN_FORMAT": constants.OUTPUT_FORMAT_TABLE,
     "HOLMSEC_ENDPOINT": "https://se-api.holmsecurity.com/v1",
     "HOLMSEC_TOKEN": "",
 }
-REQUIRED = ["HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
-VALIDATORS = {"HOLMSEC_ENDPOINT": "^http(s)?://[a-zA-Z0-9._-]+/v[0-9]$"}
-VALID_EXAMPLES = {"HOLMSEC_ENDPOINT": "example: https://se-api.holmsecurity.com/v1"}
+REQUIRED = ["HOLMSCAN_FORMAT", "HOLMSEC_ENDPOINT", "HOLMSEC_TOKEN"]
+VALIDATORS = {
+    "HOLMSCAN_FORMAT": ["table", "yaml"],
+    "HOLMSEC_ENDPOINT": "^http(s)?://[a-zA-Z0-9._-]+/v[0-9]$",
+}
+VALID_EXAMPLES = {
+    "HOLMSCAN_FORMAT": "example: table, yaml",
+    "HOLMSEC_ENDPOINT": "example: https://se-api.holmsecurity.com/v1",
+}
 CONFIG_EXAMPLES = {
+    "HOLMSCAN_FORMAT": "example: echo HOLMSCAN_FORMAT: yaml >> ~/.config/holmscan.yaml",
     "HOLMSEC_ENDPOINT": "example: echo HOLMSEC_ENDPOINT: https://se-api.holmsecurity.com/v1 >> ~/.config/holmscan.yaml",
     "HOLMSEC_TOKEN": "example: export HOLMSEC_TOKEN=abcdef40charslongtokenabcdefabcdefabcdef",
 }
@@ -70,16 +86,27 @@ class Controller(object):
                 raise HolmscanConfigException(error)
 
         # check validity of configurables
-        for k, v in VALIDATORS.items():
-            if not re.match(VALIDATORS[k], self.conf[k]):
-                error = "{0} is malformed".format(k)
+        for k, _ in VALIDATORS.items():
+            if any(
+                [
+                    (
+                        isinstance(VALIDATORS[k], str)
+                        and not re.match(VALIDATORS[k], self.conf[k])  # noqa: W503
+                    ),
+                    (
+                        isinstance(VALIDATORS[k], list)
+                        and not self.conf[k] in VALIDATORS[k]   # noqa: W503
+                    ),
+                ]
+            ):
+                error = '{0} "{1}" is malformed'.format(k, self.conf[k])
                 example = VALID_EXAMPLES.get(k)
                 if example:
                     error += ", " + example
                 raise HolmscanConfigException(error)
 
         self.session = requests.session()
-        self.scan = Scan(self)
+        self.netscan = Netscan(self)
         self.webscan = Webscan(self)
 
         self.default_headers = {
@@ -93,10 +120,10 @@ class Controller(object):
         Search order, latest has presedence:
 
           1. hard coded defaults
-          2. /etc/holmscan.yaml
-          3. /etc/holmscan.d/*.yaml
-          4. ~/.config/holmscan.yaml
-          5. ~/.config/holmscan.d/*.yaml
+          2. `/etc/holmscan.yaml`
+          3. `/etc/holmscan.d/*.yaml`
+          4. `~/.config/holmscan.yaml`
+          5. `~/.config/holmscan.d/*.yaml`
           6. environment variables
         """
         environ = os.environ.copy()
@@ -163,8 +190,9 @@ class Controller(object):
 
         return conf
 
-    def get(self, url, **kwargs):
+    def get(self, path, **kwargs):
         kwargs.setdefault("headers", {}).update(self.default_headers)
+        url = "{0}{1}".format(self.conf.get("HOLMSEC_ENDPOINT"), path)
 
         log.debug("URL query and HTTP headers: {0}".format(kwargs))
         log.debug("Sending to {0}".format(url))
@@ -181,8 +209,9 @@ class Controller(object):
 
         return response
 
-    def post(self, url, **kwargs):
+    def post(self, path, **kwargs):
         kwargs.setdefault("headers", {}).update(self.default_headers)
+        url = "{0}{1}".format(self.conf.get("HOLMSEC_ENDPOINT"), path)
 
         log.debug("URL query, HTTP request body and HTTP headers: {0}".format(kwargs))
         log.debug("Sending to {0}".format(url))
