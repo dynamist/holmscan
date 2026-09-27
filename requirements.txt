@@ -1,4 +1,4 @@
-anyconfig>=0.15.1
+anyconfig>=0.16.0
 appdirs
 docopt
 pyyaml
